@@ -2,13 +2,27 @@ import { useEffect, useState } from "react";
 
 export default function App() {
   const [countries, setCountries] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetch("https://restcountries.com/v3.1/all")
-      .then((res) => res.json())
-      .then((data) => setCountries(data))
-      .catch((err) => console.error("Error fetching data: ", err));
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setCountries(data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setError("Failed to load countries");
+        setIsLoading(false);
+      });
   }, []);
+
   const cardStyle = {
     width: "200px",
     border: "1px solid #ccc",
@@ -31,8 +45,18 @@ export default function App() {
     flexWrap: "wrap",
     justifyContent: "center",
     alignItems: "center",
-    height: "100vh",
+    minHeight: "100vh",
   };
+
+  // Show loading message
+  if (isLoading) {
+    return <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading...</div>;
+  }
+
+  // Show error message
+  if (error) {
+    return <div style={{ textAlign: "center", color: "red", marginTop: "2rem" }}>{error}</div>;
+  }
 
   return (
     <div style={containerStyle}>
