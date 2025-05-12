@@ -6,7 +6,7 @@ export default function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("https://restcountries.com/v3.1/all")
+    fetch(" https://xcountries-backend.azurewebsites.net/all")
       .then((res) => {
         if (!res.ok) {
           throw new Error("API error");
