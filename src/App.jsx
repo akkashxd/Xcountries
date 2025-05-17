@@ -1,67 +1,68 @@
 import { useEffect, useState } from "react";
+import "./App.css";          // ⬅️  import the stylesheet
 
 export default function App() {
   const [countries, setCountries] = useState([]);
+  const [filteredCountries, setFilteredCountries] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(" https://xcountries-backend.azurewebsites.net/all")
+    fetch(
+      "https://countries-search-data-prod-812920491762.asia-south1.run.app/countries"
+    )
       .then((res) => {
-        if (!res.ok) {
-          throw new Error("API error");
-        }
+        if (!res.ok) throw new Error("API error");
         return res.json();
       })
       .then((data) => {
         setCountries(data);
+        setFilteredCountries(data);
         setIsLoading(false);
       })
       .catch((err) => {
-        console.error("Error fetching data: ", err);
+        console.error(err);
         setError("Something went wrong");
         setIsLoading(false);
       });
   }, []);
 
-  if (isLoading) {
-    return <div>Loading...</div>; // ✅ must match exact test string
-  }
+  const handleSearch = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    setFilteredCountries(
+      countries.filter((c) =>
+        c.name.toLowerCase().includes(term.toLowerCase())
+      )
+    );
+  };
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (isLoading) return <div>Loading...</div>;   // ✅ keep exact text
+  if (error)     return <div>{error}</div>;
 
   return (
-    <div style={{
-      display: "flex",
-      flexWrap: "wrap",
-      justifyContent: "center",
-      alignItems: "center",
-      minHeight: "100vh"
-    }}>
-      {countries.map((country) => (
-        <div key={country.cca3} style={{
-          width: "200px",
-          border: "1px solid #ccc",
-          borderRadius: "10px",
-          margin: "10px",
-          padding: "10px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}>
-          <img
-  src={country.flag}
-  alt={`Flag of ${country.name}`}
-  style={{ width: "100px", height: "100px" }}
-/>
+    <div className="app">
+      <input
+        type="text"
+        className="search-bar"
+        placeholder="Search for a country"
+        value={searchTerm}
+        onChange={handleSearch}
+      />
 
-          <h2>{country.name}</h2>
-        </div>
-      ))}
+      <div className="country-grid">
+        {filteredCountries.map((country) => (
+          <div key={country.name} className="country-card">
+            <img
+              src={country.flag}
+              alt={`Flag of ${country.name}`}
+              className="country-flag"
+            />
+            <h2 className="country-name">{country.name}</h2>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
-
