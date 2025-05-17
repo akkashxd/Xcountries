@@ -1,31 +1,56 @@
-/** @format */
+/* --- layout / background --- */
+.app {
+  padding: 20px;
+  min-height: 100vh;
+  background-color: #1c2938;
+  color: #ffffff;
+  box-sizing: border-box;
+}
 
-.countryGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+/* --- search bar --- */
+.search-bar {
+  display: block;
+  margin: 0 auto 20px auto;
+  width: 300px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+/* --- grid of cards --- */
+.country-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 20px;
 }
 
-.searchInput {
-  width: 300px;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 5px;
+/* --- individual card --- */
+.country-card {
+  width: 200px;
+  background-color: #ffffff;
+  color: #000000;
   border: 1px solid #ccc;
-}
-
-.countryCard {
+  border-radius: 10px;
+  padding: 15px;
   text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
+  transition: transform 0.2s ease;
+}
+.country-card:hover {
+  transform: scale(1.05);
 }
 
-.flag {
+/* --- flag image --- */
+.country-flag {
   width: 100px;
-  height: auto;
+  height: 100px;
+  object-fit: contain;
   margin-bottom: 10px;
 }
-.countryName {
-  font-weight: bold;
+
+/* --- country name --- */
+.country-name {
+  font-size: 1.1rem;
+  margin: 0;
 }
