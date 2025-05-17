@@ -1,55 +1,67 @@
-/** @format */
-import axios from "axios";
-import "./App.css";
 import { useEffect, useState } from "react";
-const App = () => {
-  const [search, setSearch] = useState("");
+
+export default function App() {
   const [countries, setCountries] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchCountries();
+    fetch(" https://xcountries-backend.azurewebsites.net/all")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("API error");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setCountries(data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching data: ", err);
+        setError("Something went wrong");
+        setIsLoading(false);
+      });
   }, []);
 
-  const fetchCountries = async () => {
-    try {
-      const response = await axios.get("https://restcountries.com/v3.1/all");
-      setCountries(response.data);
-    } catch (error) {
-      console.error("something is wrong", error);
-    }
-  };
+  if (isLoading) {
+    return <div>Loading...</div>; // ✅ must match exact test string
+  }
 
-  const filteredCountries = countries.filter((country) =>
-    country.name.common.toLowerCase().includes(search.toLowerCase())
-  );
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
-    <div>
-      <input
-        type="text"
-        placeholder="Search for countries..."
-        value={search}
-        className="searchInput"
-        onChange={(e) => setSearch(e.target.value)}
-      ></input>
+    <div style={{
+      display: "flex",
+      flexWrap: "wrap",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "100vh"
+    }}>
+      {countries.map((country) => (
+        <div key={country.cca3} style={{
+          width: "200px",
+          border: "1px solid #ccc",
+          borderRadius: "10px",
+          margin: "10px",
+          padding: "10px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+          <img
+  src={country.flag}
+  alt={`Flag of ${country.name}`}
+  style={{ width: "100px", height: "100px" }}
+/>
 
-      <div className="countryGrid">
-        {filteredCountries.map((country) => {
-          return (
-            <div key={country.cca3} className="countryCard">
-              <img
-                src={country.flags.png}
-                alt={country.name.common}
-                className="flag"
-              />
-              <p className="countryName">{country.name.common}</p>
-            </div>
-          );
-        })}
-      </div>
+          <h2>{country.name}</h2>
+        </div>
+      ))}
     </div>
   );
-};
-
-export default App;
+}
 
