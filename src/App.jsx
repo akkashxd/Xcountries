@@ -14,6 +14,7 @@ export default function App() {
         return res.json();
       })
       .then((data) => {
+        console.log("Countries data:", data); // check keys here
         setCountries(data);
         setIsLoading(false);
       })
@@ -25,11 +26,7 @@ export default function App() {
   }, []);
 
   if (isLoading) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "2rem" }}>
-        Loading...
-      </div>
-    );
+    return <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading...</div>;
   }
 
   if (error) {
@@ -50,9 +47,9 @@ export default function App() {
         minHeight: "100vh",
       }}
     >
-      {countries.map((country) => (
+      {countries.map((country, index) => (
         <div
-          key={country.cca3}
+          key={country.cca3 || index}
           style={{
             width: "200px",
             border: "1px solid #ccc",
@@ -66,13 +63,14 @@ export default function App() {
           }}
         >
           <img
-            src={country.flags?.png}
-            alt={`Flag of ${country.name?.common}`}
+            src={country.flag || country.flags?.png || "https://via.placeholder.com/100"}
+            alt={`Flag of ${country.name || country.name?.common || "unknown"}`}
             style={{ width: "100px", height: "100px" }}
           />
-          <h2>{country.name?.common}</h2>
+          <h2>{country.name || country.name?.common || "Unknown Country"}</h2>
         </div>
       ))}
     </div>
   );
 }
+
